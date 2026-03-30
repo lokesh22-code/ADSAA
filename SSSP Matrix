@@ -1,0 +1,63 @@
+import java.util.*;
+
+public class DijkstraMatrix {
+
+    public static void dijkstra(int[][] graph, int source) {
+        int n = graph.length;
+
+        int[] dist = new int[n];        // distance array
+        boolean[] visited = new boolean[n]; // visited array
+
+        // Initialize distances
+        for (int i = 0; i < n; i++) {
+            dist[i] = Integer.MAX_VALUE;
+            visited[i] = false;
+        }
+
+        dist[source] = 0;
+
+        // Main loop
+        for (int i = 0; i < n - 1; i++) {
+
+            // Find minimum distance vertex
+            int u = -1;
+            for (int j = 0; j < n; j++) {
+                if (!visited[j] && (u == -1 || dist[j] < dist[u])) {
+                    u = j;
+                }
+            }
+
+            visited[u] = true;
+
+            // Update adjacent vertices
+            for (int v = 0; v < n; v++) {
+                if (graph[u][v] != 0 && !visited[v]) {
+                    if (dist[u] + graph[u][v] < dist[v]) {
+                        dist[v] = dist[u] + graph[u][v];
+                    }
+                }
+            }
+        }
+
+        // Print result
+        System.out.println("Vertex \t Distance from Source");
+        for (int i = 0; i < n; i++) {
+            System.out.println(i + "\t\t" + dist[i]);
+        }
+    }
+
+    public static void main(String[] args) {
+
+        int[][] graph = {
+            {0, 2, 0, 6, 0},
+            {2, 0, 3, 8, 5},
+            {0, 3, 0, 0, 7},
+            {6, 8, 0, 0, 9},
+            {0, 5, 7, 9, 0}
+        };
+
+        int source = 0;
+
+        dijkstra(graph, source);
+    }
+}
