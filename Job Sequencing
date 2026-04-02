@@ -1,0 +1,55 @@
+import java.util.*;
+
+class Job {
+    int id, deadline, profit;
+
+    Job(int id, int deadline, int profit) {
+        this.id = id;
+        this.deadline = deadline;
+        this.profit = profit;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+
+        Job[] jobs = {
+            new Job(1, 2, 100),
+            new Job(2, 1, 50),
+            new Job(3, 2, 10),
+            new Job(4, 1, 20)
+        };
+
+        // Step 1: Sort jobs by profit (descending)
+        Arrays.sort(jobs, (a, b) -> b.profit - a.profit);
+
+        int n = jobs.length;
+        int[] slot = new int[n];   // to store jobs
+        Arrays.fill(slot, -1);     // mark all slots empty
+
+        int totalProfit = 0;
+
+        // Step 2: Assign jobs to slots
+        for (int i = 0; i < n; i++) {
+
+            // check from last possible slot
+            for (int j = jobs[i].deadline - 1; j >= 0; j--) {
+
+                if (slot[j] == -1) {
+                    slot[j] = jobs[i].id;
+                    totalProfit += jobs[i].profit;
+                    break;
+                }
+            }
+        }
+
+        // Step 3: Print result
+        System.out.print("Jobs done: ");
+        for (int i = 0; i < n; i++) {
+            if (slot[i] != -1)
+                System.out.print("J" + slot[i] + " ");
+        }
+
+        System.out.println("\nTotal Profit: " + totalProfit);
+    }
+}
