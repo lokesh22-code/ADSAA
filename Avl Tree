@@ -1,0 +1,146 @@
+class AVLTree {
+
+    class Node {
+        int key, height;
+        Node left, right;
+
+        Node(int d) {
+            key = d;
+            height = 1;
+        }
+    }
+
+    Node root;
+
+    int height(Node n) {
+        return (n == null) ? 0 : n.height;
+    }
+
+    int getBalance(Node n) {
+        return (n == null) ? 0 : height(n.left) - height(n.right);
+    }
+
+    Node rightRotate(Node y) {
+        Node x = y.left;
+        Node t = x.right;
+
+        x.right = y;
+        y.left = t;
+
+        y.height = 1 + Math.max(height(y.left), height(y.right));
+        x.height = 1 + Math.max(height(x.left), height(x.right));
+
+        return x;
+    }
+
+    Node leftRotate(Node x) {
+        Node y = x.right;
+        Node t = y.left;
+
+        y.left = x;
+        x.right = t;
+
+        x.height = 1 + Math.max(height(x.left), height(x.right));
+        y.height = 1 + Math.max(height(y.left), height(y.right));
+
+        return y;
+    }
+
+    // INSERT
+    Node insert(Node node, int key) {
+        if (node == null)
+            return new Node(key);
+
+        if (key < node.key)
+            node.left = insert(node.left, key);
+        else if (key > node.key)
+            node.right = insert(node.right, key);
+        else
+            return node;
+
+        node.height = 1 + Math.max(height(node.left), height(node.right));
+        int balance = getBalance(node);
+
+        if (balance > 1 && key < node.left.key)
+            return rightRotate(node);
+
+        if (balance < -1 && key > node.right.key)
+            return leftRotate(node);
+
+        if (balance > 1 && key > node.left.key) {
+            node.left = leftRotate(node.left);
+            return rightRotate(node);
+        }
+
+        if (balance < -1 && key < node.right.key) {
+            node.right = rightRotate(node.right);
+            return leftRotate(node);
+        }
+
+        return node;
+    }
+
+    // DELETE
+    Node deleteNode(Node root, int key) {
+
+        if (root == null)
+            return null;
+
+        if (key < root.key)
+            root.left = deleteNode(root.left, key);
+
+        else if (key > root.key)
+            root.right = deleteNode(root.right, key);
+
+        else {
+            // 0 or 1 child
+            if (root.left == null)
+                return root.right;
+
+            else if (root.right == null)
+                return root.left;
+
+            // 2 children → find min from right
+            Node temp = root.right;
+            while (temp.left != null)
+                temp = temp.left;
+
+            root.key = temp.key;
+            root.right = deleteNode(root.right, temp.key);
+        }
+
+        root.height = 1 + Math.max(height(root.left), height(root.right));
+        int balance = getBalance(root);
+
+        if (balance > 1 && getBalance(root.left) >= 0)
+            return rightRotate(root);
+
+        if (balance > 1 && getBalance(root.left) < 0) {
+            root.left = leftRotate(root.left);
+            return rightRotate(root);
+        }
+
+        if (balance < -1 && getBalance(root.right) <= 0)
+            return leftRotate(root);
+
+        if (balance < -1 && getBalance(root.right) > 0) {
+            root.right = rightRotate(root.right);
+            return leftRotate(root);
+        }
+
+        return root;
+    }
+
+    public static void main(String[] args) {
+        AVLTree t = new AVLTree();
+
+        // Simple input
+        int[] values = {10, 20, 30, 40, 50, 25};
+
+        for (int v : values)
+            t.root = t.insert(t.root, v);
+
+        // Delete one value
+        t.root = t.deleteNode(t.root, 40);
+    }
+}
