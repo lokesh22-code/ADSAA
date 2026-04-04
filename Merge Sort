@@ -1,0 +1,52 @@
+class MergeExample {
+
+    static void merge(int a[], int low, int mid, int high) {
+
+        int b[] = new int[a.length];
+
+        int i = low;
+        int j = mid + 1;
+        int h = low;
+
+        // Main merging
+        while (i <= mid && j <= high) {
+
+            if (a[i] <= a[j]) {
+                b[h] = a[i];
+                i++;
+            } else {
+                b[h] = a[j];
+                j++;
+            }
+            h++;
+        }
+
+        // Copy remaining elements
+        if (i > mid) {
+            for (int k = j; k <= high; k++) {
+                b[h] = a[k];
+                h++;
+            }
+        } else {
+            for (int k = i; k <= mid; k++) {
+                b[h] = a[k];
+                h++;
+            }
+        }
+
+        // Copy back to original array
+        for (int k = low; k <= high; k++) {
+            a[k] = b[k];
+        }
+    }
+
+    public static void main(String[] args) {
+
+        int a[] = {3, 8, 1, 7};
+
+        merge(a, 0, 1, 3);  // merging two parts
+
+        for (int x : a)
+            System.out.print(x + " ");
+    }
+}
